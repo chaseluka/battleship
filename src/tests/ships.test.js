@@ -1,4 +1,4 @@
-import Ship from './ships';
+import Ship from '../scripts/ships';
 
 describe('let objects increase hit count', () => {
   it('hit count adds one', () => {
