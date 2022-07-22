@@ -11,4 +11,5 @@ describe('let objects increase hit count', () => {
     destroyer.hit();
     expect(destroyer.isSunk()).toBe(true);
   });
+  it('get position of ship', () => {});
 });
