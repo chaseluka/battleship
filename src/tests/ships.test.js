@@ -11,5 +11,10 @@ describe('let objects increase hit count', () => {
     destroyer.hit();
     expect(destroyer.isSunk()).toBe(true);
   });
-  it('get position of ship', () => {});
+  it('sunk is false before a killing hit', () => {
+    const destroyer = Ship(4);
+    destroyer.hit();
+    destroyer.hit();
+    expect(destroyer.isSunk()).toBe(false);
+  });
 });
