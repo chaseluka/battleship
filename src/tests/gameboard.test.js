@@ -12,34 +12,57 @@ test('ships array lets me get name', () => {
   const player = Gameboard();
   expect(player.ships[0].name).toBe('carrier');
 });
-test('attack hits', () => {
-  const player = Gameboard();
+describe('Attacking tests', () => {
+  it('attack hits', () => {
+    const player = Gameboard();
+    player.ships[1].hit();
+    expect(player.ships[1].hitCount).toHaveLength(1);
+  });
+  it('declared attack hits a ships position', () => {
+    const player = Gameboard();
+    const thisTarget = player.ships[1].position[1];
+    player.recievedAttack(thisTarget);
+    expect(player.ships[1].hitCount).toHaveLength(1);
+  });
+  it('attacked list grows after every recieved attack', () => {
+    const player = Gameboard();
+    const thisTarget = player.ships[1].position[1];
+    player.recievedAttack(thisTarget);
+    player.recievedAttack(thisTarget);
+    expect(player.targettedCoords).toHaveLength(2);
+  });
+  it('a ship is sunk', () => {
+    const player = Gameboard();
+    player.ships[1].hit();
+    player.ships[1].hit();
+    player.ships[1].hit();
+    player.ships[1].hit();
+    expect(player.ships[1].isSunk()).toBe(true);
+  });
+  it('all ships are sunk', () => {
+    const player = Gameboard();
+    player.ships.forEach((ship) => {
+      const index = player.ships.indexOf(ship);
+      for (let i = 0; i < player.ships[index].length; i += 1) {
+        player.ships[index].hit();
+      }
+    });
+    expect(player.allShipsSunk()).toBe(true);
+  });
+  it('all ships are not sunk', () => {
+    const player = Gameboard();
+    expect(player.allShipsSunk()).toBe(false);
+  });
+  it('ship recieves attacks until its sunk', () => {
+    const player = Gameboard();
+    const arr = player.ships[1].position;
+    arr.forEach((coord) => {
+      player.recievedAttack(coord);
+    });
+    expect(player.ships[1].isSunk()).toBe(true);
+  });
+});
 
-  expect(player.attackHit(1)).toBe(1);
-});
-test('declared attack hits a ships position', () => {
-  const player = Gameboard();
-  const thisTarget = player.ships[1].position[1];
-
-  expect(player.recievedAttack(thisTarget)).toBe(1);
-});
-test('attacked list grows after every recieved attack', () => {
-  const player = Gameboard();
-  const thisTarget = player.ships[1].position[1];
-  player.recievedAttack(thisTarget);
-  player.recievedAttack(thisTarget);
-  expect(player.targettedCoords).toHaveLength(2);
-});
-test('all ships are sunk', () => {
-  const player = Gameboard();
-  player.ships[0].hitCount = 5;
-  player.ships[1].hitCount = 4;
-  expect(player.allShipsSunk()).toBe(true);
-});
-test('all ships are not sunk', () => {
-  const player = Gameboard();
-  expect(player.allShipsSunk()).toBe(false);
-});
 test('get full board', () => {
   const player = Gameboard();
   expect(player.board).toHaveLength(100);

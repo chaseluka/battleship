@@ -1,10 +1,8 @@
 const Ship = (length, coordinates, name) => {
-  let hitCount = 0;
-  const isSunk = () => hitCount === length;
+  const hitCount = [];
+  const isSunk = () => hitCount.length === length;
 
-  const hit = () => {
-    hitCount += 1;
-  };
+  const hit = () => hitCount.push('x');
 
   const generatePosition = (coord1, coord2) => {
     const fixed = coord1[Math.floor(Math.random() * 10)];
@@ -37,6 +35,7 @@ const Ship = (length, coordinates, name) => {
     name,
     length,
     position,
+    hitCount,
   };
 };
 

@@ -20,16 +20,12 @@ const Gameboard = () => {
 
   const ships = [Ship(5, coordinates, 'carrier'), Ship(4, coordinates, 'battleship')];
 
-  const attackHit = (ship) => ships[ship].hit();
-
   const recievedAttack = (coord) => {
     targettedCoords.push(coord);
-    ships.filter((ship) => {
+    ships.forEach((ship) => {
       if (ship.position.includes(coord)) {
         ship.hit();
-        return ship;
       }
-      return ship;
     });
   };
 
@@ -40,7 +36,6 @@ const Gameboard = () => {
     recievedAttack,
     ships,
     targettedCoords,
-    attackHit,
     allShipsSunk,
     board,
   };
