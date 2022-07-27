@@ -1,31 +1,57 @@
-const Ship = (length, coordinates, name) => {
+const Ship = (length, coordinates, name, availableCoords) => {
   const hitCount = [];
   const isSunk = () => hitCount.length === length;
 
   const hit = () => hitCount.push('x');
 
-  const generatePosition = (coord1, coord2) => {
+  const addCoordAtEnd = (...args) => {
+    const push = args[0] ? args[1].push(`${args[3]}${args[2]}`) : args[1].push(`${args[2]}${args[3]}`);
+    return push;
+  };
+
+  const addCoordAtStart = (...args) => {
+    const unshift = args[0] ? args[1].unshift(`${args[3]}${args[2]}`) : args[1].unshift(`${args[2]}${args[3]}`);
+    return unshift;
+  };
+
+  const updatePosition = (start, ...args) => {
+    const updatedPosition = start ? addCoordAtStart(...args) : addCoordAtEnd(...args);
+    return updatedPosition;
+  };
+
+  const generatePosition = (coord1, coord2, vert) => {
     const fixed = coord1[Math.floor(Math.random() * 10)];
     const position = [];
-    let randomStartIndex = Math.floor(Math.random() * 10);
-    let backwardsStart = randomStartIndex;
+    let goFoward = Math.floor(Math.random() * 10);
+    let goBack = goFoward;
     for (let i = 0; i < length; i += 1) {
-      const nextLetter = coord2[randomStartIndex];
-      randomStartIndex += 1;
-      if (nextLetter === undefined) {
-        const backwardsLetter = coord2[(backwardsStart -= 1)];
-        position.unshift(`${fixed}${backwardsLetter}`);
-      } else position.push(`${fixed}${nextLetter}`);
+      const flex = coord2[goFoward];
+      goFoward += 1;
+      if (flex === undefined) {
+        const waningFlex = coord2[(goBack -= 1)];
+        updatePosition(true, vert, position, fixed, waningFlex);
+      } else updatePosition(false, vert, position, fixed, flex);
     }
     return position;
   };
-  const position = (() => {
+
+  const getPosition = () => {
     const axis = Math.random() * 2;
     let shipPosition = '';
     if (axis <= 1) {
-      shipPosition = generatePosition(coordinates.xAxis, coordinates.yAxis);
+      shipPosition = generatePosition(coordinates.xAxis, coordinates.yAxis, false);
     } else {
-      shipPosition = generatePosition(coordinates.yAxis, coordinates.xAxis);
+      shipPosition = generatePosition(coordinates.yAxis, coordinates.xAxis, true);
+    }
+    return shipPosition;
+  };
+
+  const testPosition = (test) => test.every((coord) => availableCoords.includes(coord));
+
+  const position = (() => {
+    let shipPosition = getPosition();
+    while (!testPosition(shipPosition)) {
+      shipPosition = getPosition();
     }
     return shipPosition;
   })();

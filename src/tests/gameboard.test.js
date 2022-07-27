@@ -61,9 +61,24 @@ describe('Attacking tests', () => {
     });
     expect(player.ships[1].isSunk()).toBe(true);
   });
+  it('all ships are sunk through full game', () => {
+    const player = Gameboard();
+    player.board.forEach((coord) => {
+      player.recievedAttack(coord);
+    });
+    expect(player.allShipsSunk()).toBe(true);
+  });
 });
 
 test('get full board', () => {
   const player = Gameboard();
   expect(player.board).toHaveLength(100);
+});
+test('available coords are erased for ships generated', () => {
+  const player = Gameboard();
+  expect(player.availableCoords.length < 60).toBe(true);
+});
+test('num', () => {
+  const array = [16 + -10 + -1, 16 + 10 + 1];
+  expect(array[0]).toBe(5);
 });

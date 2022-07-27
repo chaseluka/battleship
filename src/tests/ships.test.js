@@ -1,5 +1,5 @@
 import Ship from '../scripts/ships';
-
+// null. Tests in gameboard.test.js
 describe('let objects increase hit count', () => {
   it('hit count adds one', () => {
     const carrier = Ship(5);
