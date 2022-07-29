@@ -1,4 +1,3 @@
-const me = you;
-let you = 'hello';
+import game from './scripts/game';
 
-const obj = [hello, you];
+game();

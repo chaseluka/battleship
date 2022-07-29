@@ -1,0 +1,137 @@
+body {
+  height: 100vh;
+  width: 100vw;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+.container,
+.header,
+.main,
+.board,
+#overlay > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.gameboard,
+.buttons {
+  display: flex;
+}
+
+.header,
+.main,
+.gameboard,
+.board,
+.buttons,
+#overlay > div {
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  height: 100%;
+  background-color: #f1f1f1;
+  gap: 5.5vmax;
+}
+
+.header {
+  background-color: #e5e5e5;
+  height: clamp(40px, 9vh, 80px);
+  border-bottom: 3px solid #222;
+}
+
+.title {
+  font-size: min(4vmax, 60px);
+}
+
+.main {
+  height: max-content;
+  gap: 8vmax;
+}
+
+.gameboard {
+  gap: 8vw;
+}
+
+.board {
+  gap: 1vh;
+}
+
+.board-title {
+  font-size: min(3vmax, 20px);
+}
+
+#opponent,
+#player {
+  width: clamp(200px, 25vmax, 500px);
+  height: clamp(200px, 25vmax, 500px);
+  box-shadow: 2px 2px 2px 2px #aaa;
+  display: inline-grid;
+  grid-template: repeat(10, 1fr) / repeat(10, 1fr);
+}
+
+.buttons {
+  gap: 3vmax;
+  margin-left: 1.8vw;
+}
+
+.button {
+  border-radius: 7px;
+  padding: clamp(4px, 1vh, 10px) clamp(10px, 2.5vw, 50px);
+  text-align: center;
+  font-size: min(3vmax, 20px);
+}
+
+#start {
+  background-color: #16a34a;
+}
+
+.grid-item {
+  border: 0.2px solid #666;
+}
+
+.top {
+  border-top: none;
+}
+
+.left {
+  border-left: none;
+}
+
+.bottom {
+  border-bottom: none;
+}
+
+.right {
+  border-right: none;
+}
+
+.ship {
+  background-color: #444;
+}
+
+.miss {
+  background-color: #999;
+}
+
+.hit {
+  background-color: red;
+}
+
+#overlay {
+  display: none;
+}
+
+#overlay > div {
+  width: 100vw;
+  height: max(100%, 100vh);
+  z-index: 1;
+  background-color: rgba(128, 128, 128, 0.324);
+  position: absolute;
+  transform: translate(0, -100%);
+}
+
+.overlay-title {
+  font-size: min(6vmax, 50px);
+}

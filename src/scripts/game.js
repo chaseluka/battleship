@@ -1,28 +1,21 @@
 import Gameboard from './gameboard';
 import Player from './player';
-
-const player1Gameboard = Gameboard();
-const player2Gameboard = Gameboard();
-
-const player1 = Player(player2Gameboard);
-const player2 = Player(player1Gameboard);
-
-const announceWinner = () => {
-  if (player1Gameboard.allShipsSunk()) return 'Player Two Wins';
-  if (player2Gameboard.allShipsSunk()) return 'Player One Wins';
-  return false;
-};
+import Dom from './dom';
 
 const game = () => {
-  let turnCount = 2;
-  while (!player1Gameboard.allShipsSunk() && !player2Gameboard.allShipsSunk()) {
-    if (turnCount % 2 === 0) {
-      player1.attackOpponent();
-    } else player2.attackOpponent();
+  const player1Gameboard = Gameboard();
+  const player2Gameboard = Gameboard();
 
-    turnCount += 1;
-  }
-  return announceWinner();
+  const player1 = Player(player2Gameboard);
+  const player2 = Player(player1Gameboard);
+
+  const player1Dom = Dom(player1Gameboard, player1, player2);
+
+  player1Dom.generateGrid('player');
+  player1Dom.displayShips();
+  const player2Dom = Dom(player2Gameboard, player2, player1, player1Dom);
+
+  player2Dom.generateGrid('opponent');
 };
 
-export { game, player1, player2Gameboard };
+export default game;
