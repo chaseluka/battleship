@@ -15,6 +15,10 @@ const Gameboard = (isCpu) => {
 
   const ships = [];
 
+  const coordIsFarLeft = (coord) => coord % 10 === 0;
+
+  const coordIsFarRight = (coord) => (coord - 9) % 10 === 0;
+
   const getIndexes = (coordIndex) => {
     const topLeft = coordIndex + -11;
     const top = coordIndex + -10;
@@ -26,11 +30,22 @@ const Gameboard = (isCpu) => {
     const bottomRight = coordIndex + 11;
 
     const coordsToRemove = [topLeft, top, topRight, left, right, bottomLeft, bottom, bottomRight];
+    if (coordIsFarLeft(coordIndex)) {
+      coordsToRemove.splice(0, 1);
+      coordsToRemove.splice(2, 1);
+      coordsToRemove.splice(3, 1);
+    }
+    if (coordIsFarRight(coordIndex)) {
+      coordsToRemove.splice(2, 1);
+      coordsToRemove.splice(3, 1);
+      coordsToRemove.splice(5, 1);
+    }
     return coordsToRemove;
   };
 
   const removeTouchingCoords = (coord) => {
     const indexList = getIndexes(coord);
+    console.log(indexList);
     indexList.forEach((index) => {
       if (availableCoords.includes(index)) {
         availableCoords.splice(availableCoords.indexOf(index), 1);

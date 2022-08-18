@@ -1,3 +1,4 @@
+/* eslint-disable operator-linebreak */
 const Dom = (playerBoard, player, opponent, oppDom) => {
   const board = [];
   let playerTurn = true;
@@ -95,12 +96,18 @@ const Dom = (playerBoard, player, opponent, oppDom) => {
 
   document.getElementById('rotate').addEventListener('click', rotate);
 
+  const unavailableCoord = (index) => !playerBoard.availableCoords.includes(index);
+
+  const dragOffEdge = (index) => index > 99;
+
+  const unavailableDrag = (index) => dragOffEdge(index) || unavailableCoord(index);
+
   const displayDragHorz = (index, color) => {
     const toggleColor = color ? '#999' : '#444';
     position.splice(0, position.length);
     for (let i = 0; i < draggedShipLength; i += 1) {
       const nextIndex = index + i;
-      if ((nextIndex % 10 === 0 && index % 10 !== 0) || nextIndex > 99) break;
+      if ((nextIndex % 10 === 0 && i > 0) || unavailableDrag(nextIndex)) break;
       position.push(nextIndex);
       board[nextIndex].style.backgroundColor = toggleColor;
     }
@@ -111,7 +118,7 @@ const Dom = (playerBoard, player, opponent, oppDom) => {
     position.splice(0, position.length);
     for (let i = 0; i < draggedShipLength; i += 1) {
       const nextIndex = index + i * 10;
-      if (nextIndex > 99) break;
+      if (unavailableCoord(nextIndex)) break;
       position.push(nextIndex);
       board[nextIndex].style.backgroundColor = toggleColor;
     }
@@ -120,7 +127,7 @@ const Dom = (playerBoard, player, opponent, oppDom) => {
   const removeDisplayDragHorz = (index) => {
     for (let i = 0; i < draggedShipLength; i += 1) {
       const nextIndex = index + i;
-      if ((nextIndex % 10 === 0 && index % 10 !== 0) || nextIndex > 99) break;
+      if ((nextIndex % 10 === 0 && i > 0) || unavailableDrag(nextIndex)) break;
       board[nextIndex].style.backgroundColor = '#fff';
     }
   };
@@ -128,7 +135,7 @@ const Dom = (playerBoard, player, opponent, oppDom) => {
   const removeDisplayDragVert = (index) => {
     for (let i = 0; i < draggedShipLength; i += 1) {
       const nextIndex = index + i * 10;
-      if (nextIndex > 99) break;
+      if (unavailableCoord(nextIndex)) break;
       board[nextIndex].style.backgroundColor = '#fff';
     }
   };
@@ -184,6 +191,8 @@ const Dom = (playerBoard, player, opponent, oppDom) => {
       });
       // eslint-disable-next-line no-loop-func
       div.addEventListener('drop', () => {
+        removeDisplayDrag(i);
+        if (draggedShipLength !== position.length) return;
         displayDrag(i, false);
         dropped.classList.add('dropped');
         dropped.setAttribute('draggable', 'false');
