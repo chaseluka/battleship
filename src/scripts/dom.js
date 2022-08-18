@@ -1,32 +1,33 @@
 const Dom = (playerBoard, player, opponent, oppDom) => {
   const board = [];
   let playerTurn = true;
+  let draggedShipLength = 0;
+  let isVertical = false;
+  let dropped = '';
+  const position = [];
 
   const determineCoords = (e) => {
     const index = e.target.getAttribute('data-index');
-    const coord = playerBoard.board[index];
-    return coord;
+    return index;
   };
 
   const displayHit = (index) => {
-    board[index].classList.add('hit');
+    board[index].style.backgroundColor = '#ff0000';
   };
 
   const displayMiss = (index) => {
-    board[index].classList.add('miss');
+    board[index].style.backgroundColor = '#999';
   };
 
+  const hitMisses = (coord) => playerBoard.ships.every((ship) => !ship.position.includes(coord));
+
   const markChosenCoordOnBoard = (coord) => {
-    playerBoard.ships.forEach((ship) => {
-      const index = playerBoard.board.indexOf(coord);
-      if (ship.position.includes(coord)) displayHit(index);
-      displayMiss(index);
-    });
+    if (hitMisses(coord)) displayMiss(coord);
+    else displayHit(coord);
   };
 
   const togglePlayerTurn = () => {
-    const swtich = playerTurn ? (playerTurn = false) : (playerTurn = true);
-    return swtich;
+    playerTurn = !playerTurn;
   };
 
   const announceWinner = (winner) => {
@@ -52,7 +53,7 @@ const Dom = (playerBoard, player, opponent, oppDom) => {
   const selectedAttack = (e) => {
     if (!playerTurn) e.preventDefault();
     else {
-      const coord = determineCoords(e);
+      const coord = parseInt(determineCoords(e), 10);
       opponent.playerAttack(coord);
       togglePlayerTurn();
       markChosenCoordOnBoard(coord);
@@ -60,6 +61,98 @@ const Dom = (playerBoard, player, opponent, oppDom) => {
       if (isCPUDefeated()) announceWinner('You');
       else displayCPUAttack();
     }
+  };
+
+  const changeGridHorz = () => {
+    const shipsGrid = document.querySelector('.ships');
+    shipsGrid.style.gridTemplate = 'repeat(3, 1fr) / repeat(2, 1fr)';
+  };
+
+  const changeGridVert = () => {
+    const shipsGrid = document.querySelector('.ships');
+    shipsGrid.style.gridTemplate = 'repeat(2, 1fr) / repeat(3, 1fr)';
+  };
+
+  const rotateDisplay = () => {
+    const ships = document.querySelectorAll('.drag-item');
+    ships.forEach((ship) => {
+      if (!isVertical) {
+        changeGridHorz();
+        ship.classList.add('horizontal');
+        ship.classList.remove('vertical');
+      } else {
+        changeGridVert();
+        ship.classList.add('vertical');
+        ship.classList.remove('horizontal');
+      }
+    });
+  };
+
+  const rotate = () => {
+    isVertical = !isVertical;
+    rotateDisplay();
+  };
+
+  document.getElementById('rotate').addEventListener('click', rotate);
+
+  const displayDragHorz = (index, color) => {
+    const toggleColor = color ? '#999' : '#444';
+    position.splice(0, position.length);
+    for (let i = 0; i < draggedShipLength; i += 1) {
+      const nextIndex = index + i;
+      if ((nextIndex % 10 === 0 && index % 10 !== 0) || nextIndex > 99) break;
+      position.push(nextIndex);
+      board[nextIndex].style.backgroundColor = toggleColor;
+    }
+  };
+
+  const displayDragVert = (index, color) => {
+    const toggleColor = color ? '#999' : '#444';
+    position.splice(0, position.length);
+    for (let i = 0; i < draggedShipLength; i += 1) {
+      const nextIndex = index + i * 10;
+      if (nextIndex > 99) break;
+      position.push(nextIndex);
+      board[nextIndex].style.backgroundColor = toggleColor;
+    }
+  };
+
+  const removeDisplayDragHorz = (index) => {
+    for (let i = 0; i < draggedShipLength; i += 1) {
+      const nextIndex = index + i;
+      if ((nextIndex % 10 === 0 && index % 10 !== 0) || nextIndex > 99) break;
+      board[nextIndex].style.backgroundColor = '#fff';
+    }
+  };
+
+  const removeDisplayDragVert = (index) => {
+    for (let i = 0; i < draggedShipLength; i += 1) {
+      const nextIndex = index + i * 10;
+      if (nextIndex > 99) break;
+      board[nextIndex].style.backgroundColor = '#fff';
+    }
+  };
+
+  const displayDrag = (index, color) => {
+    if (!isVertical) displayDragHorz(index, color);
+    else displayDragVert(index, color);
+  };
+
+  const removeDisplayDrag = (index) => {
+    if (!isVertical) removeDisplayDragHorz(index);
+    else removeDisplayDragVert(index);
+  };
+
+  const newShipOnDrop = (thisPosition) => {
+    const shipsPosition = [];
+    thisPosition.forEach((index) => shipsPosition.push(index));
+    playerBoard.createShip(
+      draggedShipLength, //
+      dropped.id,
+      playerBoard.availableCoords,
+      false,
+      shipsPosition,
+    );
   };
 
   const generateGrid = (user) => {
@@ -76,26 +169,53 @@ const Dom = (playerBoard, player, opponent, oppDom) => {
       div.setAttribute('data-index', `${i}`);
       board.push(div);
       div.addEventListener('click', selectedAttack);
+      div.addEventListener('dragenter', (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'copy';
+        setTimeout(() => {
+          displayDrag(i, true);
+        }, 0.01);
+      });
+      div.addEventListener('dragover', (e) => {
+        e.preventDefault();
+      });
+      div.addEventListener('dragleave', () => {
+        removeDisplayDrag(i);
+      });
+      // eslint-disable-next-line no-loop-func
+      div.addEventListener('drop', () => {
+        displayDrag(i, false);
+        dropped.classList.add('dropped');
+        dropped.setAttribute('draggable', 'false');
+        newShipOnDrop(position);
+      });
     }
   };
 
-  const markUserCoordOnBoard = (index) => {
-    board[index].classList.add('ship');
+  const drag = (e) => {
+    e.target.classList.add('dragging');
+    draggedShipLength = e.target.children.length;
+    dropped = e.target;
   };
 
-  const markShipOnBoard = (ship) => {
-    ship.position.forEach((coord) => {
-      markUserCoordOnBoard(playerBoard.board.indexOf(coord));
+  const createDragShips = () => {
+    const ships = document.querySelectorAll('.drag-item');
+
+    ships.forEach((ship) => {
+      ship.addEventListener('dragstart', (e) => {
+        drag(e);
+      });
+      ship.addEventListener('dragend', () => {
+        ship.classList.remove('dragging');
+      });
     });
   };
 
-  const displayShips = () => {
-    playerBoard.ships.forEach((ship) => {
-      markShipOnBoard(ship);
-    });
+  return {
+    generateGrid,
+    markChosenCoordOnBoard,
+    createDragShips,
   };
-
-  return { generateGrid, displayShips, markChosenCoordOnBoard };
 };
 
 export default Dom;

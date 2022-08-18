@@ -1,14 +1,14 @@
 const Player = (oppBoard) => {
-  const availableSqaures = [];
-  oppBoard.board.forEach((coord) => {
-    availableSqaures.push(coord);
-  });
+  const availableSquares = [];
+  for (let i = 0; i < 100; i += 1) {
+    availableSquares.push(i);
+  }
 
-  const randomAttack = () => Math.floor(Math.random() * availableSqaures.length);
+  const randomAttack = () => Math.floor(Math.random() * availableSquares.length);
 
-  const updateAvailableSquares = (attack) => availableSqaures.splice(attack, 1);
+  const updateAvailableSquares = (attack) => availableSquares.splice(attack, 1);
 
-  const findInAvailableSquares = (coord) => availableSqaures.indexOf(coord);
+  const findInAvailableSquares = (coord) => availableSquares.indexOf(coord);
 
   const attackOpponent = (coord, attackNum) => {
     oppBoard.recievedAttack(coord);
@@ -18,7 +18,7 @@ const Player = (oppBoard) => {
 
   const cpuAttack = () => {
     const attackNum = randomAttack();
-    const coord = availableSqaures[attackNum];
+    const coord = availableSquares[attackNum];
     attackOpponent(coord, attackNum);
     return coord;
   };
@@ -29,7 +29,7 @@ const Player = (oppBoard) => {
 
   return {
     attackOpponent,
-    availableSqaures,
+    availableSquares,
     randomAttack,
     oppBoard,
     updateAvailableSquares,

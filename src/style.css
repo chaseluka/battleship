@@ -9,12 +9,14 @@ body {
 .header,
 .main,
 .board,
-#overlay > div {
+#overlay > div,
+.bottom {
   display: flex;
   flex-direction: column;
 }
 
 .gameboard,
+.drag-item,
 .buttons {
   display: flex;
 }
@@ -23,7 +25,7 @@ body {
 .main,
 .gameboard,
 .board,
-.buttons,
+.bottom,
 #overlay > div {
   justify-content: center;
   align-items: center;
@@ -47,7 +49,7 @@ body {
 
 .main {
   height: max-content;
-  gap: 8vmax;
+  gap: 4vmax;
 }
 
 .gameboard {
@@ -71,9 +73,61 @@ body {
   grid-template: repeat(10, 1fr) / repeat(10, 1fr);
 }
 
-.buttons {
+.bottom {
   gap: 3vmax;
-  margin-left: 1.8vw;
+}
+
+.ship-item {
+  height: 3.15vmin;
+  width: 3.15vmin;
+}
+
+.drag-item {
+  cursor: grab;
+}
+
+.ships > div:active {
+  cursor: grabbing;
+}
+
+.ships {
+  display: grid;
+  grid-template: repeat(3, 1fr) / repeat(2, 1fr);
+  width: fit-content;
+  justify-items: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.vertical {
+  flex-direction: column;
+}
+
+.horizontal {
+  flex-direction: row;
+}
+
+.dragging {
+  opacity: 0.5;
+  cursor: move;
+}
+
+.dropped {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.dragging:active {
+  cursor: grab;
+}
+
+#cruiser,
+#submarine {
+  grid-row: 2 / 3;
+}
+
+#carrier {
+  grid-column: span 2;
 }
 
 .button {
@@ -83,12 +137,25 @@ body {
   font-size: min(3vmax, 20px);
 }
 
+.buttons {
+  gap: 3vw;
+}
+
 #start {
   background-color: #16a34a;
 }
 
-.grid-item {
+#rotate {
+  background-color: #999;
+}
+
+.grid-item,
+.ship-item {
   border: 0.2px solid #666;
+}
+
+.grid-item {
+  background-color: #fff;
 }
 
 .top {
@@ -107,16 +174,9 @@ body {
   border-right: none;
 }
 
-.ship {
+.ship,
+.ship-item {
   background-color: #444;
-}
-
-.miss {
-  background-color: #999;
-}
-
-.hit {
-  background-color: red;
 }
 
 #overlay {

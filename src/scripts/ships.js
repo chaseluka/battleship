@@ -1,36 +1,27 @@
-const Ship = (length, coordinates, name, availableCoords) => {
+const Ship = (length, name, availableCoords, random, selectedPosition) => {
   const hitCount = [];
   const isSunk = () => hitCount.length === length;
 
   const hit = () => hitCount.push('x');
 
-  const addCoordAtEnd = (...args) => {
-    const push = args[0] ? args[1].push(`${args[3]}${args[2]}`) : args[1].push(`${args[2]}${args[3]}`);
-    return push;
-  };
-
-  const addCoordAtStart = (...args) => {
-    const unshift = args[0] ? args[1].unshift(`${args[3]}${args[2]}`) : args[1].unshift(`${args[2]}${args[3]}`);
-    return unshift;
-  };
-
-  const updatePosition = (start, ...args) => {
-    const updatedPosition = start ? addCoordAtStart(...args) : addCoordAtEnd(...args);
-    return updatedPosition;
-  };
-
-  const generatePosition = (coord1, coord2, vert) => {
-    const fixed = coord1[Math.floor(Math.random() * 10)];
+  const generateRandomHorzPosition = () => {
+    let index = Math.floor(Math.random() * 100);
     const position = [];
-    let goFoward = Math.floor(Math.random() * 10);
-    let goBack = goFoward;
     for (let i = 0; i < length; i += 1) {
-      const flex = coord2[goFoward];
-      goFoward += 1;
-      if (flex === undefined) {
-        const waningFlex = coord2[(goBack -= 1)];
-        updatePosition(true, vert, position, fixed, waningFlex);
-      } else updatePosition(false, vert, position, fixed, flex);
+      if ((index % 10 === 0 && i > 0) || index > 99) break;
+      position.push(index);
+      index += 1;
+    }
+    return position;
+  };
+
+  const generateRandomVertPosition = () => {
+    let index = Math.floor(Math.random() * 100);
+    const position = [];
+    for (let i = 0; i < length; i += 1) {
+      if (index > 99) break;
+      position.push(index);
+      index += 10;
     }
     return position;
   };
@@ -39,21 +30,28 @@ const Ship = (length, coordinates, name, availableCoords) => {
     const axis = Math.random() * 2;
     let shipPosition = '';
     if (axis <= 1) {
-      shipPosition = generatePosition(coordinates.xAxis, coordinates.yAxis, false);
+      shipPosition = generateRandomHorzPosition();
     } else {
-      shipPosition = generatePosition(coordinates.yAxis, coordinates.xAxis, true);
+      shipPosition = generateRandomVertPosition();
     }
     return shipPosition;
   };
 
-  const testPosition = (test) => test.every((coord) => availableCoords.includes(coord));
+  const positionIsAvailable = (test) => test.every((coord) => availableCoords.includes(coord));
 
-  const position = (() => {
+  const positionEqualsLength = (shipPosition) => shipPosition.length === length;
+
+  const randomPosition = () => {
     let shipPosition = getPosition();
-    while (!testPosition(shipPosition)) {
+    while (!positionIsAvailable(shipPosition) || !positionEqualsLength(shipPosition)) {
       shipPosition = getPosition();
     }
     return shipPosition;
+  };
+
+  const position = (() => {
+    if (random) return randomPosition();
+    return selectedPosition;
   })();
   return {
     hit,
