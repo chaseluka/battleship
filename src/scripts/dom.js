@@ -1,11 +1,12 @@
 /* eslint-disable operator-linebreak */
-const Dom = (playerBoard, player, opponent, oppDom) => {
+const Dom = (playerBoard, player, opponent, oppDom, isPlayer) => {
   const board = [];
   let playerTurn = true;
   let draggedShipLength = 0;
   let isVertical = false;
   let dropped = '';
   const position = [];
+  const shipsPlaced = [];
 
   const determineCoords = (e) => {
     const index = e.target.getAttribute('data-index');
@@ -162,6 +163,46 @@ const Dom = (playerBoard, player, opponent, oppDom) => {
     );
   };
 
+  const addShipToPlacedList = () => {
+    shipsPlaced.push('1');
+  };
+
+  const addClickableSquares = () => board.forEach((div) => div.addEventListener('click', selectedAttack));
+
+  const dragEventListeners = (div, i) => {
+    div.addEventListener('dragenter', (e) => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'copy';
+      setTimeout(() => {
+        displayDrag(i, true);
+      }, 0.01);
+    });
+    div.addEventListener('dragover', (e) => {
+      e.preventDefault();
+    });
+    div.addEventListener('dragleave', () => {
+      removeDisplayDrag(i);
+    });
+    // eslint-disable-next-line no-loop-func
+    div.addEventListener('drop', () => {
+      removeDisplayDrag(i);
+      if (draggedShipLength !== position.length) return;
+      displayDrag(i, false);
+      dropped.classList.add('dropped');
+      dropped.setAttribute('draggable', 'false');
+      newShipOnDrop(position);
+      addShipToPlacedList();
+    });
+  };
+
+  const startGame = () => {
+    const startBtn = document.getElementById('start');
+    startBtn.addEventListener('click', (e) => {
+      if (oppDom.shipsPlaced.length === 5) addClickableSquares();
+      else e.preventDefault();
+    });
+  };
+
   const generateGrid = (user) => {
     const grid = document.getElementById(`${user}`);
 
@@ -175,29 +216,7 @@ const Dom = (playerBoard, player, opponent, oppDom) => {
       if ([90, 91, 92, 93, 94, 95, 96, 97, 98, 99].includes(i)) div.classList.add('bottom');
       div.setAttribute('data-index', `${i}`);
       board.push(div);
-      div.addEventListener('click', selectedAttack);
-      div.addEventListener('dragenter', (e) => {
-        e.preventDefault();
-        e.dataTransfer.dropEffect = 'copy';
-        setTimeout(() => {
-          displayDrag(i, true);
-        }, 0.01);
-      });
-      div.addEventListener('dragover', (e) => {
-        e.preventDefault();
-      });
-      div.addEventListener('dragleave', () => {
-        removeDisplayDrag(i);
-      });
-      // eslint-disable-next-line no-loop-func
-      div.addEventListener('drop', () => {
-        removeDisplayDrag(i);
-        if (draggedShipLength !== position.length) return;
-        displayDrag(i, false);
-        dropped.classList.add('dropped');
-        dropped.setAttribute('draggable', 'false');
-        newShipOnDrop(position);
-      });
+      if (isPlayer) dragEventListeners(div, i);
     }
   };
 
@@ -224,6 +243,8 @@ const Dom = (playerBoard, player, opponent, oppDom) => {
     generateGrid,
     markChosenCoordOnBoard,
     createDragShips,
+    startGame,
+    shipsPlaced,
   };
 };
 

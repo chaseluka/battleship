@@ -9,12 +9,13 @@ const game = () => {
   const player1 = Player(player2Gameboard);
   const player2 = Player(player1Gameboard);
 
-  const player1Dom = Dom(player1Gameboard, player1, player2);
+  const player1Dom = Dom(player1Gameboard, player1, player2, false, true);
 
   player1Dom.generateGrid('player');
   player1Dom.createDragShips();
-  const player2Dom = Dom(player2Gameboard, player2, player1, player1Dom);
+  const player2Dom = Dom(player2Gameboard, player2, player1, player1Dom, false);
   player2Dom.generateGrid('opponent');
+  player2Dom.startGame();
 };
 
 export default game;

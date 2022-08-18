@@ -45,7 +45,6 @@ const Gameboard = (isCpu) => {
 
   const removeTouchingCoords = (coord) => {
     const indexList = getIndexes(coord);
-    console.log(indexList);
     indexList.forEach((index) => {
       if (availableCoords.includes(index)) {
         availableCoords.splice(availableCoords.indexOf(index), 1);
