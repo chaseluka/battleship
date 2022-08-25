@@ -1,3 +1,5 @@
+// Ship objects to be used for each ship of each player
+
 const Ship = (length, name, availableCoords, random, selectedPosition) => {
   const hitCount = [];
   const isSunk = () => hitCount.length === length;
@@ -8,6 +10,7 @@ const Ship = (length, name, availableCoords, random, selectedPosition) => {
     let index = Math.floor(Math.random() * 100);
     const position = [];
     for (let i = 0; i < length; i += 1) {
+      // prevents spilling over right side of board and extending beyond the final spot of the board
       if ((index % 10 === 0 && i > 0) || index > 99) break;
       position.push(index);
       index += 1;
@@ -19,7 +22,7 @@ const Ship = (length, name, availableCoords, random, selectedPosition) => {
     let index = Math.floor(Math.random() * 100);
     const position = [];
     for (let i = 0; i < length; i += 1) {
-      if (index > 99) break;
+      if (index > 99) break; // prevent going beyond board limits
       position.push(index);
       index += 10;
     }
@@ -30,6 +33,7 @@ const Ship = (length, name, availableCoords, random, selectedPosition) => {
     const axis = Math.random() * 2;
     let shipPosition = '';
     if (axis <= 1) {
+      // let ship be horizontal or vertical
       shipPosition = generateRandomHorzPosition();
     } else {
       shipPosition = generateRandomVertPosition();
@@ -41,6 +45,7 @@ const Ship = (length, name, availableCoords, random, selectedPosition) => {
 
   const positionEqualsLength = (shipPosition) => shipPosition.length === length;
 
+  // generate random positon, see if the position is in unused squares, else get new position
   const randomPosition = () => {
     let shipPosition = getPosition();
     while (!positionIsAvailable(shipPosition) || !positionEqualsLength(shipPosition)) {

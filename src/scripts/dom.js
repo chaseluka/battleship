@@ -44,12 +44,13 @@ const Dom = (playerBoard, player, opponent, oppDom, isPlayer) => {
   const isCPUDefeated = () => opponent.opponentIsDefeated();
 
   const displayCPUAttack = () => {
+    // pause for dramatic effect
     setTimeout(() => {
       const coord = player.cpuAttack();
       oppDom.markChosenCoordOnBoard(coord);
       if (isPlayerDefeated()) announceWinner('CPU');
       else togglePlayerTurn();
-    }, 1);
+    }, 1000);
   };
 
   const selectedAttack = (e) => {
@@ -74,7 +75,7 @@ const Dom = (playerBoard, player, opponent, oppDom, isPlayer) => {
     const shipsGrid = document.querySelector('.ships');
     shipsGrid.style.gridTemplate = 'repeat(2, 1fr) / repeat(3, 1fr)';
   };
-
+  // rotate display of draggable ships for user experience
   const rotateDisplay = () => {
     const ships = document.querySelectorAll('.drag-item');
     ships.forEach((ship) => {
@@ -95,19 +96,20 @@ const Dom = (playerBoard, player, opponent, oppDom, isPlayer) => {
     rotateDisplay();
   };
 
-  document.getElementById('rotate').addEventListener('click', rotate);
+  document.getElementById('rotate').addEventListener('click', rotate); // button for changing drag ships rotation
 
   const unavailableCoord = (index) => !playerBoard.availableCoords.includes(index);
 
   const dragOffEdge = (index) => index > 99;
 
   const unavailableDrag = (index) => dragOffEdge(index) || unavailableCoord(index);
-
+  // start at an index and display length of ship on grid down if vertical, and up if horizontal
   const displayDragHorz = (index, color) => {
-    const toggleColor = color ? '#999' : '#444';
+    const toggleColor = color ? '#999' : '#444'; // on drop show dark background, on drag show light
     position.splice(0, position.length);
     for (let i = 0; i < draggedShipLength; i += 1) {
       const nextIndex = index + i;
+      // prevent display on unavailable squares
       if ((nextIndex % 10 === 0 && i > 0) || unavailableDrag(nextIndex)) break;
       position.push(nextIndex);
       board[nextIndex].style.backgroundColor = toggleColor;
@@ -115,7 +117,7 @@ const Dom = (playerBoard, player, opponent, oppDom, isPlayer) => {
   };
 
   const displayDragVert = (index, color) => {
-    const toggleColor = color ? '#999' : '#444';
+    const toggleColor = color ? '#999' : '#444'; //* comments above
     position.splice(0, position.length);
     for (let i = 0; i < draggedShipLength; i += 1) {
       const nextIndex = index + i * 10;
@@ -124,7 +126,7 @@ const Dom = (playerBoard, player, opponent, oppDom, isPlayer) => {
       board[nextIndex].style.backgroundColor = toggleColor;
     }
   };
-
+  // same as display, except it removes the display once the ship has left an index
   const removeDisplayDragHorz = (index) => {
     for (let i = 0; i < draggedShipLength; i += 1) {
       const nextIndex = index + i;
@@ -164,6 +166,7 @@ const Dom = (playerBoard, player, opponent, oppDom, isPlayer) => {
   };
 
   const addShipToPlacedList = () => {
+    // determines when game is ready to 'start'
     shipsPlaced.push('1');
   };
 
@@ -196,13 +199,13 @@ const Dom = (playerBoard, player, opponent, oppDom, isPlayer) => {
   };
 
   const startGame = () => {
+    // allow cpu board to be clicked on when ships all placed
     const startBtn = document.getElementById('start');
     startBtn.addEventListener('click', (e) => {
       if (oppDom.shipsPlaced.length === 5) addClickableSquares();
       else e.preventDefault();
     });
   };
-
   const generateGrid = (user) => {
     const grid = document.getElementById(`${user}`);
 

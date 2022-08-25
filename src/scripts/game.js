@@ -2,6 +2,7 @@ import Gameboard from './gameboard';
 import Player from './player';
 import Dom from './dom';
 
+// wrap game together
 const game = () => {
   const player1Gameboard = Gameboard(false);
   const player2Gameboard = Gameboard(true);
@@ -13,6 +14,7 @@ const game = () => {
 
   player1Dom.generateGrid('player');
   player1Dom.createDragShips();
+  // allow player2Dom access to player1Dom, for displaying cpu attacks
   const player2Dom = Dom(player2Gameboard, player2, player1, player1Dom, false);
   player2Dom.generateGrid('opponent');
   player2Dom.startGame();
